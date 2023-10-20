@@ -7,15 +7,23 @@ services:
       - "3000:3000"
     volumes:
       - grafana-data:/var/lib/grafana
-      - grafana-configs:/etc/grafana
-  
+      - ./configs/grafana/datasources:/etc/grafana/provisioning/datasources/
+      - ./configs/grafana/dashboards:/etc/grafana/provisioning/dashboards/
+
   prometheus:
     image: prom/prometheus:v2.47.2
     ports:
       - "9090:9090"
+    command: 
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus" 
+      - "--web.external-url=http://127.0.0.1:9090"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries" 
+      - "--web.console.templates=/usr/share/prometheus/consoles"
     volumes:
       - prom-data:/prometheus
-      - prom-configs:/etc/prometheus
+      - ./configs/prometheus/alert_rules.yml:/etc/prometheus/alert_rules.yml
+      - ./configs/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
   
   node-exporter:
     image: prom/node-exporter:v1.6.1
