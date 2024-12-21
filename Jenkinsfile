@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Grafana') {
             steps {
-                sh 'sudo bash run.sh'
+                sh 'bash run.sh'
             }
         }
     }
