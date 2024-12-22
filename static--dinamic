@@ -1,0 +1,54 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  - job_name: "ubuntu-servers"
+    static_configs:
+      - targets:
+          - "10.0.0.1:9100"
+          - "10.0.0.2:9100"
+
+  - job_name: "windows-servers"
+    static_configs:
+      - targets:
+          - "10.0.0.3:9182"
+          - "10.0.0.4:9182"
+
+  - job_name: "prod-servers"
+    ec2_sd_configs:
+      - port: 9100
+        filters:
+          - name: "tag:Environment"
+            values: ["prod"]
+
+  - job_name: "dev-servers"
+    ec2_sd_configs:
+      - port: 9100
+        filters:
+          - name: "tag:Environment"
+            values: ["dev"]
+
+  - job_name: "docker_nodes"
+    static_configs:
+      - targets:
+          - "node-exporter:9100"
+        labels:
+          role: "manager"
+
+  - job_name: "swarm_services"
+    docker_sd_configs:
+      - host: "unix:///var/run/docker.sock"
+        filters:
+          - name: "label"
+            values: ["monitor=true"]
+
+    relabel_configs:
+      - source_labels: ["__meta_docker_service_name"]
+        target_label: "job"
+
+      - source_labels: ["__meta_docker_container_name"]
+        target_label: "instance"
