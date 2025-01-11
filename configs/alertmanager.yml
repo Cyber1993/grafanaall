@@ -1,3 +1,30 @@
+receivers:
+  - name: 'telegram'
+    telegram_configs:
+      - bot_token: «fbfsnsfnsfsfsfnfnddhsrhshsr»
+        chat_id: -353535252525  
+        send_resolved: true  
+
+route:
+  receiver: 'telegram'
+  routes:
+    - receiver: 'telegram'
+      matchers:
+        - severity=~"warning|critical|firing"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 route:
   receiver: 'telegram'
   routes:    
